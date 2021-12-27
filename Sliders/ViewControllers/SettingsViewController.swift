@@ -26,16 +26,16 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
         
     //MARK: - Public Properties
     var delegate: ScreenSettingsDelegate!
+    var color: UIColor!
     
     // MARK: - Life Cycles Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        changeSliderValue(slider: redSlider, value: Float(delegate.screenSettings.backgroundColorRedValue))
-        changeSliderValue(slider: greenSlider, value: Float(delegate.screenSettings.backgroundColorGreenValue))
-        changeSliderValue(slider: blueSlider, value: Float(delegate.screenSettings.backgroundColorBlueValue))
+        setSliders()
         
-        changeColorView()
+        colorView.backgroundColor = color
         
         colorView.layer.cornerRadius = 20
         
@@ -60,17 +60,21 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func doneButtonePressed() {
-        delegate.screenSettings.backgroundColorRedValue = CGFloat(redSlider.value)
-        delegate.screenSettings.backgroundColorGreenValue = CGFloat(greenSlider.value)
-        delegate.screenSettings.backgroundColorBlueValue = CGFloat(blueSlider.value)
-        
-        delegate.updateUIFromScreenSettings()
+        delegate.updateUIFromScreenSettings(color: colorView.backgroundColor ?? .white)
         navigationController?.popViewController(animated: true)
     }
     //MARK: - Public Methods
     
     
     //MARK: - Private Metods
+    
+    fileprivate func setSliders() {
+        let ciColor = CIColor(color: color)
+        changeSliderValue(slider: redSlider, value: Float(ciColor.red))
+        changeSliderValue(slider: greenSlider, value: Float(ciColor.green))
+        changeSliderValue(slider: blueSlider, value: Float(ciColor.blue))
+    }
+    
     private func changeColorView () {
         let currentColor = UIColor (red: CGFloat(redSlider.value), green: CGFloat(greenSlider.value), blue: CGFloat(blueSlider.value), alpha: CGFloat(1.0))
         colorView.backgroundColor = currentColor
